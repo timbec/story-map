@@ -1,0 +1,1 @@
+This is a plugin designed to show a map of the Uranium City region with markers for the various stories (or 'places') about Uranium City and region. 
