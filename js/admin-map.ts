@@ -1,6 +1,8 @@
+import * as mapboxgl from 'mapbox-gl';
+
 document.addEventListener('DOMContentLoaded', () => {
     const s = uchAdminMap;
-    mapboxgl.accessToken = s.token;
+    (mapboxgl as { accessToken: string }).accessToken = s.token;
 
     const map = new mapboxgl.Map({
         container: 'uch-admin-map',

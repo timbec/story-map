@@ -1,3 +1,5 @@
+import * as mapboxgl from 'mapbox-gl';
+
 export default class TerrainLayers {
     static addTerrainLayers(map: mapboxgl.Map): void {
         map.addSource('mapbox-terrain', {

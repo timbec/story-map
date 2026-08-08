@@ -1,3 +1,5 @@
+import * as mapboxgl from 'mapbox-gl';
+
 export default class MapboxMap {
     map: mapboxgl.Map;
 
@@ -8,7 +10,7 @@ export default class MapboxMap {
         zoom: number,
         accessToken: string
     ) {
-        mapboxgl.accessToken = accessToken;
+        (mapboxgl as { accessToken: string }).accessToken = accessToken;
         this.map = new mapboxgl.Map({ container, style, center, zoom });
         this.map.addControl(new mapboxgl.NavigationControl());
     }

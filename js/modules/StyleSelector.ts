@@ -1,3 +1,5 @@
+import * as mapboxgl from 'mapbox-gl';
+
 export default class StyleSelector {
     private selector: HTMLSelectElement;
     private map: mapboxgl.Map;

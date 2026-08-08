@@ -1,3 +1,5 @@
+import * as mapboxgl from 'mapbox-gl';
+
 export default class MarkersAndClusters {
     private static _places: Place[] = [];
     private static _map: mapboxgl.Map | null = null;
@@ -64,11 +66,11 @@ export default class MarkersAndClusters {
             },
         });
 
-        map.on('click', 'clusters', (e) => {
+        map.on('click', 'clusters', (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
             const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
             const clusterId = (features[0].properties as { cluster_id: number }).cluster_id;
             const source = map.getSource('places') as mapboxgl.GeoJSONSource;
-            source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+            source.getClusterExpansionZoom(clusterId, (err: Error | null, zoom: number) => {
                 if (err) return;
                 const coords = (features[0].geometry as GeoJSON.Point).coordinates as [number, number];
                 map.easeTo({ center: coords, zoom });

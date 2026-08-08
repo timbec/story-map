@@ -13,7 +13,7 @@
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-typescript": "^7.29.7",
-    "@types/mapbox-gl": "^3.4.1",
+    "@types/mapbox-gl": "^2.7.21",
     "babel-loader": "^8.3.0",
     "css-loader": "^5.2.7",
     "sass": "^1.77.8",
