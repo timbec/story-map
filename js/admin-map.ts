@@ -1,26 +1,26 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var s = uchAdminMap;
+document.addEventListener('DOMContentLoaded', () => {
+    const s = uchAdminMap;
     mapboxgl.accessToken = s.token;
 
-    var map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: 'uch-admin-map',
         style: 'mapbox://styles/mapbox/satellite-streets-v11',
         center: [parseFloat(s.lng), parseFloat(s.lat)],
-        zoom: s.hasPin ? 14 : 11
+        zoom: s.hasPin ? 14 : 11,
     });
 
     map.addControl(new mapboxgl.NavigationControl());
 
-    var marker = null;
+    let marker: mapboxgl.Marker | null = null;
 
-    function setCoords(lat, lng) {
-        document.getElementById('uch-latitude').value = lat.toFixed(6);
-        document.getElementById('uch-longitude').value = lng.toFixed(6);
+    function setCoords(lat: number, lng: number): void {
+        (document.getElementById('uch-latitude') as HTMLInputElement).value = lat.toFixed(6);
+        (document.getElementById('uch-longitude') as HTMLInputElement).value = lng.toFixed(6);
     }
 
-    function attachDrag(m) {
-        m.on('dragend', function () {
-            var ll = m.getLngLat();
+    function attachDrag(m: mapboxgl.Marker): void {
+        m.on('dragend', () => {
+            const ll = m.getLngLat();
             setCoords(ll.lat, ll.lng);
         });
     }
@@ -32,10 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
         attachDrag(marker);
     }
 
-    map.on('click', function (e) {
-        var lat = e.lngLat.lat;
-        var lng = e.lngLat.lng;
-
+    map.on('click', (e) => {
+        const { lat, lng } = e.lngLat;
         if (marker) {
             marker.setLngLat([lng, lat]);
         } else {
@@ -44,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .addTo(map);
             attachDrag(marker);
         }
-
         setCoords(lat, lng);
     });
 });

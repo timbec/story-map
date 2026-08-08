@@ -6,7 +6,9 @@
  * Author: Tim Beckett
  */
 
-define('UCH_MAPBOX_TOKEN', 'MAPBOX_TOKEN_REDACTED');
+$_uch_env = parse_ini_file(__DIR__ . '/.env');
+define('UCH_MAPBOX_TOKEN', $_uch_env['MAPBOX_TOKEN'] ?? '');
+unset($_uch_env);
 define('UCH_MAP_POST_TYPES', array('places', 'writing'));
 
 // -------------------------------------------------------
@@ -74,7 +76,7 @@ function uch_map_admin_scripts($hook) {
 
     wp_enqueue_style('mapbox-css-admin', 'https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css');
     wp_enqueue_script('mapbox-js-admin', 'https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js', array(), null, true);
-    wp_enqueue_script('uch-admin-map', plugin_dir_url(__FILE__) . 'js/admin-map.js', array('mapbox-js-admin'), null, true);
+    wp_enqueue_script('uch-admin-map', plugin_dir_url(__FILE__) . 'dist/admin-map.js', array('mapbox-js-admin'), null, true);
 
     $lat = get_post_meta($post->ID, 'latitude', true);
     $lng = get_post_meta($post->ID, 'longitude', true);

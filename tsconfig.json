@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "./js",
+    "outDir": "./dist"
+  },
+  "include": ["js/**/*"],
+  "exclude": ["node_modules"]
+}

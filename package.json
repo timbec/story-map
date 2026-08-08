@@ -2,20 +2,25 @@
   "name": "mapbox-plugin",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "start": "webpack serve --config webpack.config.js --mode development",
-    "watch": "webpack --watch --config webpack.config.js"
+    "watch": "webpack --watch --config webpack.config.js",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.24.8",
+    "@babel/preset-typescript": "^7.29.7",
+    "@types/mapbox-gl": "^3.4.1",
     "babel-loader": "^8.3.0",
     "css-loader": "^5.2.7",
     "sass": "^1.77.8",
     "sass-loader": "^10.5.2",
     "style-loader": "^2.0.0",
+    "ts-loader": "^9.6.2",
+    "typescript": "^7.0.2",
     "webpack": "^5.93.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^3.11.3"

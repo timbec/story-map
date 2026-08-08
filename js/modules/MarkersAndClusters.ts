@@ -1,10 +1,12 @@
-// /js/modules/MarkersAndClusters.js
 export default class MarkersAndClusters {
-    static addMarkersAndClusters(map, places) {
+    private static _places: Place[] = [];
+    private static _map: mapboxgl.Map | null = null;
+
+    static addMarkersAndClusters(map: mapboxgl.Map, places: Place[]): void {
         MarkersAndClusters._places = places;
         MarkersAndClusters._map = map;
 
-        const geojson = {
+        const geojson: GeoJSON.FeatureCollection<GeoJSON.Point> = {
             type: 'FeatureCollection',
             features: places.map(place => ({
                 type: 'Feature',
@@ -14,11 +16,8 @@ export default class MarkersAndClusters {
                     permalink: place.permalink,
                     featured_image: place.featured_image,
                 },
-                geometry: {
-                    type: 'Point',
-                    coordinates: [place.lng, place.lat]
-                }
-            }))
+                geometry: { type: 'Point', coordinates: [place.lng, place.lat] },
+            })),
         };
 
         map.addSource('places', {
@@ -26,7 +25,7 @@ export default class MarkersAndClusters {
             data: geojson,
             cluster: true,
             clusterMaxZoom: 14,
-            clusterRadius: 50
+            clusterRadius: 50,
         });
 
         map.addLayer({
@@ -35,15 +34,9 @@ export default class MarkersAndClusters {
             source: 'places',
             filter: ['has', 'point_count'],
             paint: {
-                'circle-color': [
-                    'step', ['get', 'point_count'],
-                    '#51bbd6', 100, '#f1f075', 750, '#f28cb1'
-                ],
-                'circle-radius': [
-                    'step', ['get', 'point_count'],
-                    20, 100, 30, 750, 40
-                ]
-            }
+                'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+                'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+            },
         });
 
         map.addLayer({
@@ -54,8 +47,8 @@ export default class MarkersAndClusters {
             layout: {
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 12
-            }
+                'text-size': 12,
+            },
         });
 
         map.addLayer({
@@ -67,16 +60,18 @@ export default class MarkersAndClusters {
                 'circle-color': '#11b4da',
                 'circle-radius': 8,
                 'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
-            }
+                'circle-stroke-color': '#fff',
+            },
         });
 
-        map.on('click', 'clusters', function (e) {
+        map.on('click', 'clusters', (e) => {
             const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-            const clusterId = features[0].properties.cluster_id;
-            map.getSource('places').getClusterExpansionZoom(clusterId, function (err, zoom) {
+            const clusterId = (features[0].properties as { cluster_id: number }).cluster_id;
+            const source = map.getSource('places') as mapboxgl.GeoJSONSource;
+            source.getClusterExpansionZoom(clusterId, (err, zoom) => {
                 if (err) return;
-                map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom });
+                const coords = (features[0].geometry as GeoJSON.Point).coordinates as [number, number];
+                map.easeTo({ center: coords, zoom });
             });
         });
 
@@ -93,7 +88,7 @@ export default class MarkersAndClusters {
                 closeOnClick: false,
                 className: 'marker-tooltip',
                 offset: 28,
-                anchor: 'bottom'
+                anchor: 'bottom',
             });
 
             const imgHtml = place.featured_image
@@ -104,14 +99,13 @@ export default class MarkersAndClusters {
             el.addEventListener('mouseenter', () => {
                 tooltip.setLngLat([place.lng, place.lat]).addTo(map);
             });
-            el.addEventListener('mouseleave', () => {
-                tooltip.remove();
-            });
+            el.addEventListener('mouseleave', () => { tooltip.remove(); });
 
             new mapboxgl.Marker(el)
                 .setLngLat([place.lng, place.lat])
                 .addTo(map)
-                .getElement().addEventListener('click', function () {
+                .getElement()
+                .addEventListener('click', () => {
                     tooltip.remove();
                     MarkersAndClusters.showDetail(place);
                 });
@@ -120,16 +114,15 @@ export default class MarkersAndClusters {
         MarkersAndClusters.showList();
     }
 
-    static showList() {
+    static showList(): void {
         const places = MarkersAndClusters._places;
-        const popupElement = document.getElementById('popup-content');
+        const popupElement = document.getElementById('popup-content') as HTMLElement;
 
         const items = places.map(place => `
             <div class="sidebar-list-item" data-lat="${place.lat}" data-lng="${place.lng}">
                 ${place.featured_image
                     ? `<img class="sidebar-list-item__img" src="${place.featured_image}" alt="${place.title}">`
-                    : ''
-                }
+                    : ''}
                 <div class="sidebar-list-item__text">
                     <h3 class="sidebar-list-item__title">${place.title}</h3>
                     <p class="sidebar-list-item__excerpt">${place.excerpt}</p>
@@ -141,22 +134,19 @@ export default class MarkersAndClusters {
         popupElement.innerHTML = `<div class="sidebar-list">${items}</div>`;
 
         popupElement.querySelectorAll('.sidebar-list-item').forEach((el, i) => {
-            el.addEventListener('click', () => {
-                MarkersAndClusters.showDetail(places[i]);
-            });
+            el.addEventListener('click', () => MarkersAndClusters.showDetail(places[i]));
         });
     }
 
-    static showDetail(place) {
-        const popupElement = document.getElementById('popup-content');
+    static showDetail(place: Place): void {
+        const popupElement = document.getElementById('popup-content') as HTMLElement;
 
         popupElement.innerHTML = `
             <div class="excerpt">
                 <button class="back-to-list">&#8592; All locations</button>
                 ${place.featured_image
                     ? `<img src="${place.featured_image}" alt="${place.title}" style="width:100%;height:auto;margin:1rem 0;">`
-                    : ''
-                }
+                    : ''}
                 <h3 class="popup-title">${place.title}</h3>
                 <p>${place.excerpt}</p>
                 <a href="${place.permalink}" target="_blank">Read more</a>
@@ -168,9 +158,8 @@ export default class MarkersAndClusters {
             if (excerptEl) excerptEl.classList.add('visible');
         }, 10);
 
-        popupElement.querySelector('.back-to-list').addEventListener('click', () => {
-            MarkersAndClusters.showList();
-        });
+        (popupElement.querySelector('.back-to-list') as HTMLButtonElement)
+            .addEventListener('click', () => MarkersAndClusters.showList());
 
         const map = MarkersAndClusters._map;
         if (map) {

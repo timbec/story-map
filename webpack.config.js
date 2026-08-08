@@ -1,39 +1,47 @@
 const path = require('path');
 
 module.exports = {
-    entry: './js/main.js',
+    entry: {
+        bundle: './js/main.ts',
+        'admin-map': './js/admin-map.ts',
+    },
     output: {
-        filename: 'bundle.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
+    },
+    resolve: {
+        extensions: ['.ts', '.js'],
     },
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.[jt]s$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
+                        presets: [
+                            '@babel/preset-env',
+                            '@babel/preset-typescript',
+                        ],
+                    },
+                },
             },
             {
                 test: /\.s[ac]ss$/i,
-                use: [
-                    'style-loader', // Injects styles into DOM
-                    'css-loader', // Turns CSS into CommonJS
-                    'sass-loader' // Compiles Sass to CSS
-                ]
-            }
-        ]
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+        ],
     },
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        static: path.join(__dirname, 'dist'),
         compress: true,
         port: 9000,
         hot: true,
-        open: true
+        open: true,
     },
-    mode: 'development'
+    externals: {
+        'mapbox-gl': 'mapboxgl',
+    },
+    mode: 'development',
 };
